@@ -12,9 +12,28 @@ def retrieveUsers():
     cur = con.cursor()
     cur.execute("SELECT name, email, password FROM Users")
     users = cur.fetchall()
+
+    '''if len(users) is 0:
+        con.commit()
+        return json.dumps({'message':'User created successfully !'})
+    else:
+        return json.dumps({'error':str(users[0])})'''
+
     con.close()
     return users
 
+
+def userValidate(e,p):
+    con = sql.connect("mydb.db")
+    cur = con.cursor()
+    login = cur.execute('SELECT * from Users WHERE email = e AND password = p ')
+
+    if (len(login.fetchall()) > 0):
+         print "Welcome"
+         return True
+    else:
+         print "Login failed"
+         return False
 
 
 '''

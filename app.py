@@ -50,9 +50,19 @@ def validateLogin():
     try:
         email = request.form['inputEmail']
         password = request.form['inputPassword']
+
+        if db.userValidate(email,password):
+        	redirect('/userHome')
+        else:
+        	return render_template('error.html',error = 'Wrong Email address or Password.')
+
  
     except Exception as e:
         return render_template('error.html',error = str(e))
+
+@app.route('/userHome')
+def userHome():
+	return render_template('dashboard.html')
 
 if __name__ == "__main__":
 	app.run(debug=True)

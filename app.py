@@ -1,6 +1,6 @@
 
 import db_init as db
-from flask import Flask, render_template, request, g, json
+from flask import Flask, render_template, request, g, json, redirect
 from werkzeug import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -44,6 +44,9 @@ def signUp():
 def showSignin():
     return render_template('login.html')
 
+@app.route('/userHome')
+def userHome():
+	return render_template('dashboard.html')
 
 @app.route('/validateLogin',methods=['POST'])
 def validateLogin():
@@ -52,17 +55,17 @@ def validateLogin():
         password = request.form['inputPassword']
 
         if db.userValidate(email,password):
-        	redirect('/userHome')
+        	return redirect('/userHome')
         else:
         	return render_template('error.html',error = 'Wrong Email address or Password.')
 
  
     except Exception as e:
         return render_template('error.html',error = str(e))
+    finally:
+    	print("something wrong at finally")
 
-@app.route('/userHome')
-def userHome():
-	return render_template('dashboard.html')
+
 
 if __name__ == "__main__":
 	app.run(debug=True)

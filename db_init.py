@@ -1,19 +1,20 @@
 import sqlite3 as sql
 
-def insertUser(username,password):
-    con = sql.connect("database.db")
+def insertUser(name,email,password):
+    con = sql.connect("mydb.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO users (username,password) VALUES (?,?)", (username,password))
+    cur.execute("INSERT INTO Users (name,email,password) VALUES (?,?,?)", (name,email,password))
     con.commit()
     con.close()
 
 def retrieveUsers():
-	con = sql.connect("database.db")
-	cur = con.cursor()
-	cur.execute("SELECT username, password FROM users")
-	users = cur.fetchall()
-	con.close()
-	return users
+    con = sql.connect("mydb.db")
+    cur = con.cursor()
+    cur.execute("SELECT name, email, password FROM Users")
+    users = cur.fetchall()
+    con.close()
+    return users
+
 
 
 '''

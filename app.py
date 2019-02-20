@@ -1,10 +1,11 @@
 
-import db_init as get_db
+import db_init as db
 from flask import Flask, render_template, request, g, json
 from werkzeug import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
+#database config
 
 
 @app.route('/')
@@ -19,22 +20,23 @@ def showSignUp():
 @app.route('/signUp', methods = ['POST'])
 def signUp():
 
+
 	if request.method=='POST':
+		name = request.form['inputName']
 		email = request.form['inputEmail']
-		username = request.form['inputName']
 		password = request.form['inputPassword']
-		get_db.insertUser(username, password)
-		users = get_db.retrieveUsers()
+		db.insertUser(name,email, password)
+		users = db.retrieveUsers()
 
 		# validate the received values
-		if username and email and password:
+		if name and email and password:
 			return json.dumps({'html':'<span>All fields good !!</span>'})
 		else:
 			return json.dumps({'html':'<span>Enter the required fields</span>'})
 
 		return render_template('login.html', users=users)
 	else:
-		return render_template('login.html')
+		return render_template('signUp.html')
 
 
 
@@ -46,7 +48,7 @@ def showSignin():
 @app.route('/validateLogin',methods=['POST'])
 def validateLogin():
     try:
-        username = request.form['inputEmail']
+        email = request.form['inputEmail']
         password = request.form['inputPassword']
  
     except Exception as e:

@@ -27,6 +27,7 @@ def userValidate(e,p):
     con = sql.connect("mydb.db")
     cur = con.cursor()
     login = cur.execute('SELECT * from Users WHERE email = ? AND password = ?', (e,p))
+    
 
     if (len(login.fetchall()) > 0):
          print ("Welcome")

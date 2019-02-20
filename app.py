@@ -1,6 +1,6 @@
 
 import db_init as db
-from flask import Flask, render_template, request, g, json, redirect
+from flask import Flask, render_template, request, g, json, redirect, sessions
 from werkzeug import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -66,6 +66,15 @@ def validateLogin():
     	print("something wrong at finally")
 
 
+@app.route('/logout')
+def logout():
+    #session.pop('user',None)
+    return redirect('/')
+
+
+@app.route('/showSell')
+def showSell():
+    return render_template('Sell.html')
 
 if __name__ == "__main__":
 	app.run(debug=True)

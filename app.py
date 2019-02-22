@@ -1,13 +1,35 @@
 
 import db_init as db
-
-from flask import Flask, render_template, request, g, json, redirect, session
+import os
+import uuid
+from flask import Flask, render_template, request, g, json, redirect, session,jsonify, url_for
 from werkzeug import generate_password_hash, check_password_hash
-
+from werkzeug.wsgi import LimitedStream
 app = Flask(__name__)
 
 app.secret_key = 'why would I tell you my secret key?'
 #database config
+
+class StreamConsumingMiddleware(object):
+
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        stream = LimitedStream (environ['wsgi.input'],int(environ.get('CONTENT_LENGTH') or 0))
+        environ['wsgi.input'] = stream
+        app_iter = self.app(environ, start_response)
+        try:
+            stream.exhaust()
+            for event in app_iter:
+                yield event
+        finally:
+            if hasattr(app_iter, 'close'):
+                app_iter.close()
+
+app.config['UPLOAD_FOLDER'] = 'static/Uploads'
+app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
+
 
 
 @app.route('/')
@@ -89,7 +111,6 @@ def showSell():
 
 @app.route('/addItem',methods=['POST'])
 def addItem():
-    # Code will be here
     try:
         if session.get('user'):
             name = request.form['inputTitle']
@@ -109,7 +130,17 @@ def addItem():
     except Exception as e:
         return render_template('error.html',error = str(e))
     finally:
-        print("item added")
+        return render_template('success.html', success = 'Item added')
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+    	file = request.files['file']
+    	extension = os.path.splitext(file.filename)[1]
+    	f_name = str(uuid.uuid4()) + extension
+    	file.save(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
+    	return json.dumps({'filename':f_name})
 
 if __name__ == "__main__":
 	app.run(debug=True)

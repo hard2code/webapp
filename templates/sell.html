@@ -23,6 +23,8 @@
                 <ul class="nav nav-pills justify-content-end">
                     <li role="presentation" class="active"><a class="nav-link active" href="#">Sell Item</a>
                     </li>
+                    <li role="presentation"><a class="nav-link" href="/userHome">Dashboard</a>
+                    </li>
                     <li role="presentation"><a class="nav-link" href="/logout">Logout</a>
                     </li>
                 </ul>
@@ -30,7 +32,7 @@
             
         </div>
         <section>
-            <form class="form-horizontal" method="post" action="/SellItem">
+            <form class="form-horizontal" method="post" action="/addItem">
                 <fieldset>
  
                     <!-- Form Name -->
@@ -49,7 +51,7 @@
                         <label class="col-md-4 control-label" for="txtTitle">Upload Image</label>
                         <div class="col-md-4">
                             <div class="form-group"> 
-                                <input type="file" class="filestyle" data-icon="false">
+                                <input type="file" name="inputImage" class="filestyle" data-icon="false">
                             </div>
                         </div>
                     </div>

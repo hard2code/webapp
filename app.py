@@ -16,7 +16,7 @@ class StreamConsumingMiddleware(object):
         self.app = app
 
     def __call__(self, environ, start_response):
-        stream = LimitedStream (environ['wsgi.input'],int(environ.get('CONTENT_LENGTH') or 0))
+        stream = LimitedStream (environ['wsgi.input'],int(environ.get('CONTENT_LENGTH') or 0) ) 
         environ['wsgi.input'] = stream
         app_iter = self.app(environ, start_response)
         try:
@@ -115,11 +115,15 @@ def addItem():
         if session.get('user'):
             name = request.form['inputTitle']
             disc = request.form['inputDescription']
-            picURL = request.form['inputImage'] 
             userId = session.get('user')
 
+            if request.form.get('filePath') is None:
+            	picURL = ''
+            else:
+            	picURL = request.form.get('filePath')
+
             db.add_item(userId,name,disc,picURL)
-            item = db.get_item(name)
+            item = db.get_items(userId)
             if len(item) is 0:
                 return render_template('error.html',error = 'Item is not added!')
             else:
@@ -131,6 +135,28 @@ def addItem():
         return render_template('error.html',error = str(e))
     finally:
         return render_template('success.html', success = 'Item added')
+
+
+@app.route('/getItems',methods=['GET'])
+def getItems():
+	try:
+		if session.get('user'):
+			userId = session.get('user')
+
+			items = db.get_items(userId)
+			items_dict = []
+
+			for i in items:
+				item_dict = {
+				'Id': i[0],
+				'Title': i[1],
+				'Description': i[2],
+				'FilePath': i[3]
+				}
+				items_dict.append(item_dict)
+			return json.dumps(items_dict)
+	except Exception as e:
+		return render_template('error.html',error = str(e))
 
 
 @app.route('/upload', methods=['GET', 'POST'])

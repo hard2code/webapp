@@ -58,11 +58,11 @@ def add_item(userId,name,disc,picURL):
     con.commit()
     con.close()
 
-def get_item(name):
+def get_items(userId):
     con = sql.connect("mydb.db")
     cur = con.cursor()
-    cur.execute('SELECT userId,name,disc,pictureURL from Items WHERE name = ? ', (name,))
-    item = cur.fetchall()
+    cur.execute('SELECT itemId,name,disc,pictureURL from Items WHERE userId = ? ', (userId,))
+    items = cur.fetchall()
     cur.close()
     con.close()
-    return item
+    return items
